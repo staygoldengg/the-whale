@@ -5,6 +5,7 @@ import { TopNav } from '@/components/TopNav';
 import { AmbientMusicPlayer } from '@/components/AmbientMusicPlayer';
 import { GuestModeBadge } from '@/components/GuestModeBadge';
 import { LaunchSplash } from '@/components/LaunchSplash';
+import { OnboardingFlow } from '@/components/OnboardingFlow';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -13,5 +14,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, []);
 
-  return <div className="whale-shell"><TopNav /><LaunchSplash /><GuestModeBadge /><main className="mx-auto max-w-7xl px-5 py-8">{children}</main><AmbientMusicPlayer /></div>;
+  return <div className="whale-shell"><TopNav /><LaunchSplash /><OnboardingFlow /><GuestModeBadge /><main className="mx-auto max-w-7xl px-5 py-8">{children}</main><AmbientMusicPlayer /></div>;
 }

@@ -30,7 +30,8 @@ export default function SettingsPage() {
     setDashboardDisplayName,
     setDashboardSubtitle,
     setPinnedShortcutIds,
-    setShowLaunchSplash
+    setShowLaunchSplash,
+    setShowOnboarding
   } = useAppSettings();
 
   function toggleShortcut(id: string) {
@@ -209,6 +210,18 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="whale-panel p-6 space-y-4">
+        <h2 className="text-xl font-bold text-slate-950">Help & Support</h2>
+        <button
+          type="button"
+          onClick={() => setShowOnboarding(true)}
+          className="w-full rounded-2xl border border-whale-300 bg-whale-50 px-4 py-3 text-center font-semibold text-whale-900 hover:bg-whale-100 transition"
+        >
+          🎓 Restart Onboarding Tutorial
+        </button>
+        <p className="text-sm text-slate-600">Not sure how to use The Whale? Restart the guided tour that appears when you first visit.</p>
       </section>
     </div>
   );
