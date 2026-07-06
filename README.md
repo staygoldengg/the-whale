@@ -1,6 +1,52 @@
 # The Whale — Westhampton Day School AI Companion
 
-The Whale is an AI SchoolOS companion for preschool administrators and teachers. It works **alongside Brightwheel**, not as a replacement. v2.0 upgrades the project into a role-centered operations platform with an Administrator Command Center, Teacher Workspace, guided lesson planning, staff feedback, resource library, notification center, analytics, and a stronger School Brain workflow.
+> **AI-powered operations platform for preschool administrators and teachers**  
+> **Free to host • Free to access • Works on mobile & desktop**
+
+---
+
+## 🚀 **Quick Start: Deploy in 5 Minutes**
+
+```bash
+# 1. Install Vercel CLI
+npm install -g vercel
+
+# 2. Deploy to Vercel (free hosting)
+vercel --prod
+
+# 3. Add env vars in Vercel dashboard
+# → Then visit: thewhale.westhampton.app ✨
+
+# 4. Every git push auto-deploys!
+git push origin main
+```
+
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for step-by-step guide.**
+
+---
+
+## 🆓 **100% Free to Run**
+
+- ✅ **Hosting:** Vercel (free tier, $0/month)
+- ✅ **Database:** Supabase (free tier, $0/month)
+- ✅ **SSL/Domain:** Included (free)
+- ✅ **AI Generation:** Optional ($0-100/month, pay-as-you-go)
+- ✅ **Deployment:** Automatic (free)
+
+**See [FREE-TIER.md](FREE-TIER.md) for cost breakdown & limits.**
+
+---
+
+## 📱 **Access Anywhere**
+
+| Device | How to Access |
+|--------|--------------|
+| **Desktop Browser** | Visit `thewhale.westhampton.app` |
+| **iPhone/iPad** | Safari → Share → Add to Home Screen |
+| **Android Phone** | Chrome → Menu → Install app |
+| **Windows/Mac** | Desktop app (see `desktop:build` script) |
+
+---
 
 ## What is included
 

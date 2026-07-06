@@ -4,6 +4,13 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
+  "env": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_MODEL"
+  ],
   "functions": {
     "app/api/ai/generate/route.ts": { "maxDuration": 30 },
     "app/api/google/workspace/route.ts": { "maxDuration": 30 },
@@ -15,8 +22,13 @@
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=3600" }
       ]
     }
-  ]
+  ],
+  "buildCache": {
+    "nodejs": true,
+    "paths": ["node_modules/**", ".next/cache/**"]
+  }
 }

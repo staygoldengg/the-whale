@@ -1,0 +1,32 @@
+# Files/folders to ignore during Vercel deployments
+# (speeds up build time, reduces deployment size)
+
+node_modules
+.next
+dist
+build
+out
+.git
+.github
+.gitignore
+*.log
+.DS_Store
+.env.example
+.env.naming.example
+.env.vercel.example
+README.md
+DEPLOYMENT.md
+docs
+scripts
+electron
+mobile-launcher
+capacitor.config.ts
+Build-Windows-EXE.bat
+Run-The-Whale-PC.bat
+.vscode
+.idea
+*.swp
+*.swo
+coverage
+.turbo
+tsconfig.tsbuildinfo
