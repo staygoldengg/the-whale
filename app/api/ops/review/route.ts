@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { requireAuth } from '@/lib/auth';
+import { optionalAuth } from '@/lib/auth';
 import { fail, ok, parseJson, sanitizeText } from '@/lib/api';
 import { getStaffProfiles, saveContentReview } from '@/lib/repositories';
 import { runValidationPipeline } from '@/lib/validationPipeline';
@@ -18,7 +18,7 @@ const Body = z.object({
 
 export async function POST(req: Request) {
   try {
-    const { user } = await requireAuth();
+    const auth = await optionalAuth();
     const body = await parseJson(req, Body);
     const staffProfiles = await getStaffProfiles({ staffIds: body.staffIds, classroom: body.classroom, activeOnly: true });
     const validation = runValidationPipeline(body.content, staffProfiles, { date: body.requireDate, classroom: body.classroom });
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
     });
     const status = brightwheel.issues.some((i) => i.level === 'blocker') ? 'blocked' : brightwheel.issues.some((i) => i.level === 'warning') || brightwheel.checklist.some((c) => !c.passed) ? 'needs_review' : 'approved';
 
-    const savedId = body.save ? await saveContentReview({
-      userId: user.id,
+    const savedId = body.save && auth ? await saveContentReview({
+      userId: auth.user.id,
       contentType: body.contentType,
       originalContent: body.content,
       brightwheelReadyContent: brightwheel.formatted,
@@ -40,8 +40,11 @@ export async function POST(req: Request) {
       status
     }) : null;
 
-    await writeAuditLog({ actorId: user.id, action: 'ops.review', entityType: 'content_review', entityId: savedId, metadata: { status, issueCount: brightwheel.issues.length } });
-    return ok({ brightwheelReady: brightwheel.formatted, issues: brightwheel.issues, status, savedId, staffProfilesUsed: staffProfiles.length, checklist: brightwheel.checklist, copyInstructions: brightwheel.copyInstructions });
+    if (auth) {
+      await writeAuditLog({ actorId: auth.user.id, action: 'ops.review', entityType: 'content_review', entityId: savedId, metadata: { status, issueCount: brightwheel.issues.length } });
+    }
+
+    return ok({ brightwheelReady: brightwheel.formatted, issues: brightwheel.issues, status, savedId, staffProfilesUsed: staffProfiles.length, checklist: brightwheel.checklist, copyInstructions: brightwheel.copyInstructions, guest: !auth });
   } catch (error) {
     return fail(error);
   }

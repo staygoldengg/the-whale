@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { generateWhaleContent } from '@/lib/ai';
-import { requireAuth, canGenerate } from '@/lib/auth';
+import { optionalAuth, canGenerate } from '@/lib/auth';
 import { fail, ok, parseJson, HttpError, sanitizeText } from '@/lib/api';
 import { writeAuditLog } from '@/lib/audit';
 import { saveGeneration } from '@/lib/repositories';
@@ -17,8 +17,8 @@ const Body = z.object({
 
 export async function POST(req: Request) {
   try {
-    const { user, profile } = await requireAuth();
-    if (!canGenerate(profile.role)) throw new HttpError(403, 'Your account does not have generator access.', 'FORBIDDEN');
+    const auth = await optionalAuth();
+    if (auth && !canGenerate(auth.profile.role)) throw new HttpError(403, 'Your account does not have generator access.', 'FORBIDDEN');
 
     const body = await parseJson(req, Body);
     const data = await generateWhaleContent(body.tool, body.prompt, body.metadata);
@@ -30,23 +30,25 @@ export async function POST(req: Request) {
       classroom
     }) : null;
 
-    const generationId = body.save ? await saveGeneration({
-      userId: user.id,
+    const generationId = body.save && auth ? await saveGeneration({
+      userId: auth.user.id,
       tool: body.tool,
       metadata: body.metadata,
       result: preflight?.finalContent ?? data.result,
       raw: data
     }) : null;
 
-    await writeAuditLog({
-      actorId: user.id,
-      action: 'ai.generate',
-      entityType: 'ai_generation',
-      entityId: generationId,
-      metadata: { tool: body.tool, classroom, preflightStatus: preflight?.status ?? null }
-    });
+    if (auth) {
+      await writeAuditLog({
+        actorId: auth.user.id,
+        action: 'ai.generate',
+        entityType: 'ai_generation',
+        entityId: generationId,
+        metadata: { tool: body.tool, classroom, preflightStatus: preflight?.status ?? null }
+      });
+    }
 
-    return ok({ ...data, result: preflight?.finalContent ?? data.result, preflight, generationId });
+    return ok({ ...data, result: preflight?.finalContent ?? data.result, preflight, generationId, guest: !auth });
   } catch (error) {
     return fail(error);
   }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { requireAuth } from '@/lib/auth';
+import { optionalAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { fail, ok, parseJson, sanitizeText, HttpError } from '@/lib/api';
 import { createWorkspaceDoc } from '@/lib/googleWorkspace';
@@ -14,12 +14,12 @@ const Body = z.object({
 
 export async function POST(req: Request) {
   try {
-    const { user } = await requireAuth();
+    const auth = await optionalAuth();
     const body = await parseJson(req, Body);
     const doc = await createWorkspaceDoc(body);
 
     const { data, error } = await supabaseAdmin.from('google_doc_exports').insert({
-      user_id: user.id,
+      user_id: auth?.user.id ?? null,
       review_id: body.reviewId ?? null,
       title: body.title,
       document_id: doc.documentId,
@@ -32,8 +32,11 @@ export async function POST(req: Request) {
       await supabaseAdmin.from('content_reviews').update({ status: 'exported_to_google_docs' }).eq('id', body.reviewId);
     }
 
-    await writeAuditLog({ actorId: user.id, action: 'google.docs.create', entityType: 'google_doc_export', entityId: data.id, metadata: { title: body.title, reviewId: body.reviewId ?? null } });
-    return ok({ ...doc, exportId: data.id });
+    if (auth) {
+      await writeAuditLog({ actorId: auth.user.id, action: 'google.docs.create', entityType: 'google_doc_export', entityId: data.id, metadata: { title: body.title, reviewId: body.reviewId ?? null } });
+    }
+
+    return ok({ ...doc, exportId: data.id, guest: !auth });
   } catch (error) {
     return fail(error);
   }

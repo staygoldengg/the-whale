@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createBrowserSupabase } from '@/lib/supabaseClient';
-import { createBrowserSupabase } from '@/lib/supabaseClient';
+import { CoverArt } from '@/components/CoverArt';
 
 export default function LoginPage() {
   const supabase = createBrowserSupabase();
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   function continueAsGuest() {
-    document.cookie = 'guest=true; path=/; max-age=604800';
+    document.cookie = 'guest=true; path=/; max-age=604800; samesite=lax';
     window.location.href = '/dashboard';
   }
 
@@ -165,6 +165,8 @@ export default function LoginPage() {
         {message && (
           <p className="rounded-2xl bg-whale-50 p-4 text-sm font-semibold text-whale-900">{message}</p>
         )}
+
+        <CoverArt className="h-40 w-full rounded-3xl border border-slate-200 bg-slate-100" />
       </div>
     </main>
   );

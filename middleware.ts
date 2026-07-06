@@ -18,10 +18,7 @@ export async function middleware(req: NextRequest) {
   const guestCookie = req.cookies.get('guest')?.value;
 
   if (req.nextUrl.pathname.startsWith('/dashboard') && !session && guestCookie !== 'true') {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    redirectUrl.searchParams.set('next', req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    res.cookies.set('guest', 'true', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' });
   }
 
   return res;

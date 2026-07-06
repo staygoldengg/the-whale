@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { supabaseAdmin } from './supabaseAdmin';
 import type { AiIndexItem, WhaleTool } from './types';
 import { getSchoolBrainContext, formatSchoolBrainContext } from './schoolBrain';
+import { appBaseIndexItems } from './appIndex';
 
 const categoryMap: Record<WhaleTool, string[]> = {
   'theme-week': ['Theme Weeks', 'Classroom Activities', 'Slogans', 'School Culture'],
@@ -27,7 +28,10 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
 
   if (error) throw new Error(error.message);
 
-  return (data ?? [])
+  const staticMatches = appBaseIndexItems.filter((item) => categories.includes(item.category));
+  const combined = [...(data ?? []), ...staticMatches] as AiIndexItem[];
+
+  return combined
     .map((item: AiIndexItem) => {
       const haystack = `${item.title} ${item.category} ${item.content} ${(item.tags ?? []).join(' ')}`.toLowerCase();
       const score = words.reduce((sum, word) => sum + (haystack.includes(word) ? 1 : 0), 0);

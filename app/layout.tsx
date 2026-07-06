@@ -1,5 +1,6 @@
 import './globals.css';
 import PwaInstaller from '@/components/PwaInstaller';
+import { AppSettingsProvider } from '@/components/AppSettingsProvider';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -38,10 +39,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        {children}
-        <div className="fixed bottom-4 right-4 z-50 pb-[env(safe-area-inset-bottom)] pr-[env(safe-area-inset-right)]">
-          <PwaInstaller />
-        </div>
+        <AppSettingsProvider>
+          {children}
+          <div className="fixed bottom-4 right-4 z-50 pb-[env(safe-area-inset-bottom)] pr-[env(safe-area-inset-right)]">
+            <PwaInstaller />
+          </div>
+        </AppSettingsProvider>
       </body>
     </html>
   );

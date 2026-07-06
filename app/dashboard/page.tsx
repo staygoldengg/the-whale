@@ -1,4 +1,4 @@
-import { BarChart3, Bell, BookOpen, Brain, CalendarDays, ClipboardCheck, ClipboardList, Database, GraduationCap, Library, Mail, MessageCircle, Palette, Radio, Send, Smartphone, Sparkles, TrendingUp, UserRoundCog, Users, Vote } from 'lucide-react';
+import { BarChart3, Bell, BookOpen, Brain, CalendarDays, ClipboardCheck, ClipboardList, Database, GraduationCap, Library, Mail, MessageCircle, Palette, Radio, Send, Smartphone, Sparkles, TrendingUp, UserRoundCog, Users, Vote, Lightbulb, Settings } from 'lucide-react';
 import { WhaleCard } from '@/components/WhaleCard';
 
 const cards = [
@@ -24,18 +24,18 @@ const cards = [
   ['Resource Library', 'Approve classroom-tested materials and feed them back into the School Brain.', '/dashboard/resource-library', Library],
   ['Notification Center', 'View unresolved reminders, approvals, and school operations alerts.', '/dashboard/notification-center', Bell],
   ['Analytics', 'Track adoption, reviews, lesson plans, resources, feedback, and time-saving signals.', '/dashboard/analytics', BarChart3],
-  ['AI Index Library', 'Grow the school answer library from approved staff practices.', '/dashboard/ai-index', Send]
+  ['AI Index Library', 'Grow the school answer library from approved staff practices.', '/dashboard/ai-index', Send],
+  ['Teacher Tips', 'Dedicated tab with 30 rotating recommendations to keep teachers engaged and productive.', '/dashboard/teacher-tips', Lightbulb],
+  ['Settings', 'Adjust font size, text color, calm music volume, and subscription plan.', '/dashboard/settings', Settings]
 ] as const;
+
+import DashboardHome from './dashboard-home';
 
 export default function DashboardPage() {
   return (
     <>
-      <section className="mb-8 whale-panel p-7">
-        <p className="text-sm font-bold uppercase tracking-wide text-whale-700">The Whale Dashboard</p>
-        <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">School operations, faster and warmer.</h1>
-        <p className="mt-3 max-w-3xl text-slate-600">Use The Whale to prepare school-ready materials, review them for mistakes, copy them into Brightwheel, or export longer documents to Google Docs.</p>
-      </section>
-      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <DashboardHome />
+      <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(([title, description, href, Icon]) => <WhaleCard key={href} title={title} description={description} href={href} icon={Icon} />)}
       </section>
     </>

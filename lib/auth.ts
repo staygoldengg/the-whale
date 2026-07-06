@@ -29,6 +29,25 @@ export async function requireAuth(allowedRoles?: Role[]): Promise<AuthContext> {
   return { supabase, user, profile } as AuthContext;
 }
 
+export async function optionalAuth(allowedRoles?: Role[]): Promise<AuthContext | null> {
+  const supabase = await createRouteSupabase();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return null;
+
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .select('id,email,full_name,role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || !profile) return null;
+  if (allowedRoles?.length && !allowedRoles.includes(profile.role)) {
+    throw new HttpError(403, 'You do not have permission for this action.', 'FORBIDDEN', { allowedRoles });
+  }
+
+  return { supabase, user, profile } as AuthContext;
+}
+
 export function canGenerate(role: Role) {
   return ['admin', 'teacher', 'staff'].includes(role);
 }

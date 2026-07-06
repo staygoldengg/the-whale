@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { CopyButton } from './CopyButton';
 import { OpsReviewPanel } from './OpsReviewPanel';
 import type { WhaleTool } from '@/lib/types';
+import { getAutofillOptionsForTool } from '@/lib/appIndex';
 
 type Field = { name: string; label: string; placeholder?: string; type?: 'input' | 'textarea' | 'select'; options?: string[] };
 
@@ -24,6 +25,9 @@ export function AiToolForm({ tool, fields }: { tool: WhaleTool; fields: Field[] 
   const [sources, setSources] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const autofillOptions = getAutofillOptionsForTool(tool).slice(0, 10);
+  const fieldNames = fields.map((field) => field.name);
+  const firstTextArea = fields.find((field) => field.type === 'textarea')?.name;
 
   const prompt = useMemo(() => Object.entries(values).map(([k, v]) => `${k}: ${v}`).join('\n'), [values]);
 
@@ -47,12 +51,49 @@ export function AiToolForm({ tool, fields }: { tool: WhaleTool; fields: Field[] 
     }
   }
 
+  function applyAutofill(optionId: string) {
+    const option = autofillOptions.find((entry) => entry.id === optionId);
+    if (!option) return;
+
+    setValues((prev) => {
+      const next = { ...prev };
+      for (const [name, value] of Object.entries(option.values)) {
+        if (fieldNames.includes(name) && value) {
+          next[name] = value;
+        }
+      }
+
+      if (firstTextArea && !next[firstTextArea]) {
+        const fallbackText = Object.values(option.values).find((v) => v.length > 20);
+        if (fallbackText) next[firstTextArea] = fallbackText;
+      }
+
+      return next;
+    });
+  }
+
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
       <form onSubmit={submit} className="whale-panel space-y-5 p-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-whale-700">The Whale</p>
           <h1 className="mt-1 text-3xl font-black text-slate-950">{toolLabels[tool]}</h1>
+        </div>
+        <div className="rounded-2xl border border-whale-100 bg-whale-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-whale-800">Prompt helper</p>
+          <p className="mt-1 text-sm text-slate-600">Choose one of 10 auto-fill options to quickly draft your prompt.</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {autofillOptions.map((option, index) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => applyAutofill(option.id)}
+                className="whale-muted-button justify-start px-4 py-2 text-left text-sm"
+              >
+                {index + 1}. {option.label}
+              </button>
+            ))}
+          </div>
         </div>
         {fields.map((field) => (
           <label key={field.name} className="block space-y-2">
