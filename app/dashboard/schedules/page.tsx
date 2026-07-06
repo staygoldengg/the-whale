@@ -1,0 +1,6 @@
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+
+export default async function SchedulesPage(){
+  const { data: rows } = await supabaseAdmin.from('schedules').select('*').order('date',{ascending:true}).limit(50);
+  return <section className="space-y-6"><div className="whale-panel p-6"><h1 className="text-3xl font-black">Staff Schedule</h1><p className="mt-2 text-slate-600">Admins manage weekly staff classroom assignments. Teachers and staff can view.</p></div><div className="whale-panel overflow-x-auto"><table className="w-full min-w-[640px] text-left text-sm"><thead className="bg-whale-100 text-whale-900"><tr><th className="p-4">Date</th><th className="p-4">Staff</th><th className="p-4">Role</th><th className="p-4">Classroom</th><th className="p-4">Time</th><th className="p-4">Notes</th></tr></thead><tbody>{rows?.map((r:any)=><tr key={r.id} className="border-t border-slate-100"><td className="p-4">{r.date}</td><td className="p-4 font-semibold">{r.staff_name}</td><td className="p-4">{r.role}</td><td className="p-4">{r.classroom}</td><td className="p-4">{r.start_time}–{r.end_time}</td><td className="p-4">{r.notes}</td></tr>)}</tbody></table>{!rows?.length && <p className="p-5 text-slate-600">No schedule rows yet.</p>}</div></section>
+}

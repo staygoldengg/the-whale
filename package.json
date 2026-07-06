@@ -1,0 +1,144 @@
+{
+  "name": "the-whale",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "tsx scripts/seed-ai-index.ts",
+    "typecheck": "tsc --noEmit",
+    "pwa:build": "next build",
+    "desktop:prepare": "node scripts/prepare-desktop-standalone.mjs",
+    "desktop:dev": "npm run desktop:prepare && concurrently \"next dev -p 3987\" \"wait-on http://localhost:3987 && electron .\"",
+    "desktop:build": "npm run desktop:prepare && next build && electron-builder",
+    "mobile:prepare": "node scripts/prepare-mobile-static.mjs",
+    "mobile:build": "npm run mobile:prepare && next build && npx cap sync",
+    "mobile:android": "npm run mobile:build && npx cap open android",
+    "mobile:hosted": "node scripts/configure-mobile-host.mjs",
+    "mobile:apk:debug": "npm run mobile:build && cd android && ./gradlew assembleDebug",
+    "mobile:apk:release": "npm run mobile:build && cd android && ./gradlew assembleRelease",
+    "mobile:sync": "npx cap sync android",
+    "desktop:build:win": "npm run desktop:prepare && next build && electron-builder --win nsis portable --x64",
+    "desktop:build:portable": "npm run desktop:prepare && next build && electron-builder --win portable --x64",
+    "desktop:build:mac": "npm run desktop:prepare && next build && electron-builder --mac dmg",
+    "desktop:build:linux": "npm run desktop:prepare && next build && electron-builder --linux AppImage",
+    "deploy:preflight": "node scripts/preflight-deploy.mjs",
+    "deploy:vercel": "npm run deploy:preflight && vercel --prod",
+    "deploy:preview": "npm run deploy:preflight && vercel"
+  },
+  "dependencies": {
+    "@supabase/auth-helpers-nextjs": "latest",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "latest",
+    "@tailwindcss/postcss": "^4.3.1",
+    "clsx": "latest",
+    "googleapis": "latest",
+    "lucide-react": "latest",
+    "next": "latest",
+    "openai": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "^10.4.20",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "tsx": "latest",
+    "typescript": "latest",
+    "@capacitor/android": "latest",
+    "@capacitor/cli": "latest",
+    "@capacitor/core": "latest",
+    "concurrently": "latest",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "wait-on": "latest"
+  },
+  "main": "electron/main.cjs",
+  "build": {
+    "appId": "com.westhampton.thewhale",
+    "productName": "The Whale",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      ".next/standalone/**/*",
+      ".next/static/**/*",
+      "public/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "app/.next/standalone"
+      },
+      {
+        "from": ".next/static",
+        "to": "app/.next/static"
+      },
+      {
+        "from": "public",
+        "to": "app/public"
+      },
+      {
+        "from": "package.json",
+        "to": "app/package.json"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icons/icon.ico",
+      "publisherName": "Westhampton Day School"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.education",
+      "icon": "public/icons/icon-512.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "public/icons/icon-512.png"
+    },
+    "asar": true,
+    "asarUnpack": [
+      ".next/standalone/**"
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "The Whale",
+      "artifactName": "The-Whale-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "The-Whale-Portable-${version}.${ext}"
+    }
+  },
+  "description": "The Whale v2 \u2014 Westhampton Day School AI SchoolOS for administrators and teachers"
+}

@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-whale-50 text-slate-900 antialiased; }
+button, input, textarea, select { font: inherit; }
+.whale-shell { @apply min-h-screen bg-[radial-gradient(circle_at_top_left,_#dff6ff,_transparent_32rem),linear-gradient(180deg,_#f7fcff,_#eef9ff)]; }
+.whale-panel { @apply rounded-3xl border border-white/70 bg-white/85 shadow-soft backdrop-blur; }
+.whale-input { @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none ring-whale-300 transition focus:ring-4; }
+.whale-label { @apply text-sm font-semibold text-slate-700; }
+.whale-button { @apply inline-flex items-center justify-center rounded-2xl bg-whale-700 px-5 py-3 font-semibold text-white shadow-soft transition hover:bg-whale-800 disabled:cursor-not-allowed disabled:opacity-60; }
+.whale-muted-button { @apply inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50; }
