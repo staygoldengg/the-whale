@@ -4,13 +4,13 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "env": [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "OPENAI_API_KEY",
-    "OPENAI_MODEL"
-  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": { "description": "Supabase project URL" },
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": { "description": "Supabase anon key" },
+    "SUPABASE_SERVICE_ROLE_KEY": { "description": "Supabase service role key" },
+    "OPENAI_API_KEY": { "description": "OpenAI API key (optional)" },
+    "OPENAI_MODEL": { "description": "OpenAI model name" }
+  },
   "functions": {
     "app/api/ai/generate/route.ts": { "maxDuration": 30 },
     "app/api/google/workspace/route.ts": { "maxDuration": 30 },
