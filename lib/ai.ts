@@ -1,8 +1,7 @@
-import OpenAI from 'openai';
-import { supabaseAdmin } from './supabaseAdmin';
 import type { AiIndexItem, WhaleTool } from './types';
 import { getSchoolBrainContext, formatSchoolBrainContext } from './schoolBrain';
 import { appBaseIndexItems } from './appIndex';
+import { customIndexDocuments } from './indexDocuments';
 
 const categoryMap: Record<WhaleTool, string[]> = {
   'theme-week': ['Theme Weeks', 'Classroom Activities', 'Slogans', 'School Culture'],
@@ -29,7 +28,8 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
   if (error) throw new Error(error.message);
 
   const staticMatches = appBaseIndexItems.filter((item) => categories.includes(item.category));
-  const combined = [...(data ?? []), ...staticMatches] as AiIndexItem[];
+  const customMatches = customIndexDocuments.filter((item) => categories.includes(item.category));
+  const combined = [...(data ?? []), ...staticMatches, ...customMatches] as AiIndexItem[];
 
   return combined
     .map((item: AiIndexItem) => {
@@ -42,12 +42,48 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
     .map(({ item }) => item);
 }
 
-export async function generateWhaleContent(tool: WhaleTool, prompt: string, metadata: Record<string, unknown>) {
-  if (!process.env.OPENAI_API_KEY) throw new Error('Missing OPENAI_API_KEY.');
+async function callGroqAPI(messages: Array<{ role: string; content: string }>) {
+  const apiKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY;
+  
+  if (!apiKey) {
+    // Fallback to local response using index data
+    return {
+      result: 'AI is initializing. Add your Groq API key to environment variables for full AI features.',
+      sourcesUsed: []
+    };
+  }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'mixtral-8x7b-32768',
+      messages,
+      temperature: 0.65,
+      max_tokens: 1024,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Groq API error: ${error.error?.message || response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0]?.message?.content ?? '';
+}
+
+export async function generateWhaleContent(tool: WhaleTool, prompt: string, metadata: Record<string, unknown>) {
   const indexItems = await getIndexContext(prompt, tool);
-  const brain = await getSchoolBrainContext({ query: prompt, classroom: typeof metadata.classroom === 'string' ? metadata.classroom : undefined, limit: 10 });
+  const brain = await getSchoolBrainContext({
+    query: prompt,
+    classroom: typeof metadata.classroom === 'string' ? metadata.classroom : undefined,
+    limit: 10
+  });
+  
   const context = indexItems
     .map((x) => `TITLE: ${x.title}
 CATEGORY: ${x.category}
@@ -57,9 +93,8 @@ CONTENT: ${x.content}`)
 
   const system = `You are The Whale, a safe AI companion for preschool staff at Westhampton Day School. You work alongside Brightwheel and must never claim direct integration. Use the school index and staff profile context first, then create new material. Keep everything preschool-safe, privacy-conscious, warm, clear, age-appropriate, and staff-friendly. Never include private child data. Respect staff names, pronouns, role titles, classrooms, do-not-say notes, and career path instructions when provided. Avoid medical, legal, diagnostic, or disciplinary claims. Label sections clearly. For coloring pages, generate printable image prompts only unless an image provider is explicitly connected.`;
 
-  const completion = await client.chat.completions.create({
-    model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
-    messages: [
+  try {
+    const result = await callGroqAPI([
       { role: 'system', content: system },
       {
         role: 'user',
@@ -73,9 +108,14 @@ ${formatSchoolBrainContext(brain)}
 Request:
 ${prompt}`
       }
-    ],
-    temperature: 0.65
-  });
+    ]);
 
-  return { result: completion.choices[0]?.message?.content ?? '', sourcesUsed: indexItems };
+    return { result, sourcesUsed: indexItems };
+  } catch (error) {
+    console.error('AI Generation Error:', error);
+    throw error;
+  }
 }
+
+// Import supabaseAdmin after function definitions
+import { supabaseAdmin } from './supabaseAdmin';

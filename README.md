@@ -53,7 +53,7 @@ git push origin main
 - Next.js + React + TypeScript + Tailwind CSS
 - Supabase Auth with roles: `admin`, `teacher`, `staff`
 - Supabase/Postgres schema with RLS policies
-- AI generation route using OpenAI
+- AI generation route using Groq API (free open-source LLM via Mixtral 8x7B)
 - School Brain central context service
 - Staff profiles for name spelling, pronouns, classroom, tone preferences, and career goals
 - Preflight validation for Brightwheel-ready messages
@@ -101,8 +101,8 @@ npm run seed
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4o-mini
+# Groq API key (free tier: https://groq.com) - uses open-source Mixtral model
+GROQ_API_KEY=
 
 # Optional Google Workspace connector activation
 GOOGLE_CLIENT_EMAIL=

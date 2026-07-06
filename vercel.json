@@ -8,8 +8,7 @@
     "NEXT_PUBLIC_SUPABASE_URL": { "description": "Supabase project URL" },
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": { "description": "Supabase anon key" },
     "SUPABASE_SERVICE_ROLE_KEY": { "description": "Supabase service role key" },
-    "OPENAI_API_KEY": { "description": "OpenAI API key (optional)" },
-    "OPENAI_MODEL": { "description": "OpenAI model name" }
+    "GROQ_API_KEY": { "description": "Groq API key for fast open-source LLM access (free tier available at groq.com)" }
   },
   "functions": {
     "app/api/ai/generate/route.ts": { "maxDuration": 30 },
