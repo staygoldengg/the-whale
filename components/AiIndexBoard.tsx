@@ -5,6 +5,7 @@ import type { AiIndexItem } from '@/lib/types';
 
 const orderKey = 'the-whale-ai-index-order-v1';
 const sectionKey = 'the-whale-ai-index-sections-v1';
+const customColumnsKey = 'the-whale-ai-index-custom-columns-v1';
 
 function applySavedOrder(items: AiIndexItem[], savedIds: string[]) {
   if (!savedIds.length) return items;
@@ -28,8 +29,12 @@ function applySavedOrder(items: AiIndexItem[], savedIds: string[]) {
 export function AiIndexBoard({ items }: { items: AiIndexItem[] }) {
   const [ordered, setOrdered] = useState<AiIndexItem[]>(items);
   const [sectionById, setSectionById] = useState<Record<string, string>>({});
+  const [customColumns, setCustomColumns] = useState<string[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [draggingOverSection, setDraggingOverSection] = useState<string | null>(null);
+  const [renamingColumn, setRenamingColumn] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [newColumnName, setNewColumnName] = useState('');
 
   const getSectionForItem = (item: AiIndexItem) => sectionById[item.id] ?? item.category;
 
@@ -42,9 +47,14 @@ export function AiIndexBoard({ items }: { items: AiIndexItem[] }) {
       const rawSections = window.localStorage.getItem(sectionKey);
       const savedSections = rawSections ? (JSON.parse(rawSections) as Record<string, string>) : {};
       setSectionById(savedSections);
+
+      const rawCustom = window.localStorage.getItem(customColumnsKey);
+      const savedCustom = rawCustom ? (JSON.parse(rawCustom) as string[]) : [];
+      setCustomColumns(savedCustom);
     } catch {
       setOrdered(items);
       setSectionById({});
+      setCustomColumns([]);
     }
   }, [items]);
 
@@ -56,12 +66,17 @@ export function AiIndexBoard({ items }: { items: AiIndexItem[] }) {
     window.localStorage.setItem(sectionKey, JSON.stringify(sectionById));
   }, [sectionById]);
 
+  useEffect(() => {
+    window.localStorage.setItem(customColumnsKey, JSON.stringify(customColumns));
+  }, [customColumns]);
+
   const itemCountLabel = useMemo(() => `${ordered.length} indexed items`, [ordered.length]);
   const sections = useMemo(() => {
     const base = Array.from(new Set(ordered.map((item) => item.category)));
-    const custom = Array.from(new Set(Object.values(sectionById).filter(Boolean)));
-    return Array.from(new Set([...base, ...custom]));
-  }, [ordered, sectionById]);
+    const custom = customColumns.filter(Boolean);
+    const mapped = Array.from(new Set(Object.values(sectionById).filter((s) => !base.includes(s))));
+    return [...base, ...custom, ...mapped].filter((s, i, a) => a.indexOf(s) === i);
+  }, [ordered, sectionById, customColumns]);
 
   function moveCard(fromId: string, toId: string) {
     if (fromId === toId) return;
@@ -110,17 +125,72 @@ export function AiIndexBoard({ items }: { items: AiIndexItem[] }) {
     setDraggingOverSection(null);
   }
 
+  function addCustomColumn() {
+    if (!newColumnName.trim()) return;
+    if (customColumns.includes(newColumnName)) return;
+    setCustomColumns((prev) => [...prev, newColumnName]);
+    setNewColumnName('');
+  }
+
+  function renameColumn(oldName: string, newName: string) {
+    if (!newName.trim() || newName === oldName) return;
+    if (customColumns.includes(newName)) return;
+
+    setCustomColumns((prev) => prev.map((col) => (col === oldName ? newName : col)));
+    setSectionById((prev) => {
+      const next = { ...prev };
+      for (const [itemId, section] of Object.entries(next)) {
+        if (section === oldName) {
+          next[itemId] = newName;
+        }
+      }
+      return next;
+    });
+    setRenamingColumn(null);
+    setRenameValue('');
+  }
+
+  function deleteColumn(colName: string) {
+    setCustomColumns((prev) => prev.filter((col) => col !== colName));
+    setSectionById((prev) => {
+      const next = { ...prev };
+      for (const [itemId, section] of Object.entries(next)) {
+        if (section === colName) {
+          delete next[itemId];
+        }
+      }
+      return next;
+    });
+  }
+
   return (
     <section className="space-y-6">
       <div className="whale-panel p-6">
         <h1 className="text-3xl font-black">AI Index Library</h1>
-        <p className="mt-2 text-slate-600">Drag cards between sections/columns to group your index by workflow stage. Section grouping and order are saved on this device.</p>
+        <p className="mt-2 text-slate-600">Drag cards between sections/columns to group your index by workflow stage. Create custom columns to organize by your preferred workflow. Grouping and order are saved on this device.</p>
         <p className="mt-3 text-xs font-bold uppercase tracking-wide text-whale-700">{itemCountLabel}</p>
+        <div className="mt-4 flex gap-2">
+          <input
+            className="whale-input flex-1"
+            type="text"
+            value={newColumnName}
+            onChange={(e) => setNewColumnName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') addCustomColumn();
+            }}
+            placeholder="New column name..."
+          />
+          <button type="button" onClick={addCustomColumn} className="whale-button whitespace-nowrap">
+            + Add Column
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-2">
         {sections.map((section) => {
           const cards = ordered.filter((item) => getSectionForItem(item) === section);
+          const isCustom = customColumns.includes(section);
+          const isRenaming = renamingColumn === section;
 
           return (
             <div
@@ -133,9 +203,48 @@ export function AiIndexBoard({ items }: { items: AiIndexItem[] }) {
               onDragLeave={() => setDraggingOverSection((prev) => (prev === section ? null : prev))}
               className={`w-[20rem] shrink-0 rounded-3xl border bg-white/65 p-3 ${draggingOverSection === section ? 'border-whale-500 ring-2 ring-whale-200' : 'border-white/70'}`}
             >
-              <div className="mb-3 rounded-2xl bg-slate-100 px-3 py-2">
-                <p className="text-sm font-black text-slate-900">{section}</p>
-                <p className="text-xs text-slate-600">{cards.length} items</p>
+              <div className="mb-3 flex items-center justify-between rounded-2xl bg-slate-100 px-3 py-2">
+                <div className="flex-1">
+                  {isRenaming ? (
+                    <input
+                      className="whale-input text-sm"
+                      autoFocus
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') renameColumn(section, renameValue);
+                        if (e.key === 'Escape') setRenamingColumn(null);
+                      }}
+                      onBlur={() => renameColumn(section, renameValue)}
+                    />
+                  ) : (
+                    <>
+                      <p className="text-sm font-black text-slate-900">{section}</p>
+                      <p className="text-xs text-slate-600">{cards.length} items</p>
+                    </>
+                  )}
+                </div>
+                {isCustom && (
+                  <div className="ml-2 flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRenamingColumn(section);
+                        setRenameValue(section);
+                      }}
+                      className="rounded px-2 py-1 text-xs font-bold text-whale-700 hover:bg-white/50"
+                    >
+                      ✎
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteColumn(section)}
+                      className="rounded px-2 py-1 text-xs font-bold text-red-600 hover:bg-white/50"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
