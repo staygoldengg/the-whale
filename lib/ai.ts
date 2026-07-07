@@ -2,6 +2,8 @@ import type { AiIndexItem, WhaleTool } from './types';
 import { getSchoolBrainContext, formatSchoolBrainContext } from './schoolBrain';
 import { appBaseIndexItems } from './appIndex';
 import { customIndexDocuments } from './indexDocuments';
+import { connectorIndexItems } from './externalConnectors';
+import { campLessonRecordsToIndexItems, lessonPlanRecords } from './lessonPlanKnowledge';
 
 const categoryMap: Record<WhaleTool, string[]> = {
   'theme-week': ['Theme Weeks', 'Classroom Activities', 'Slogans', 'School Culture'],
@@ -29,7 +31,17 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
 
   const staticMatches = appBaseIndexItems.filter((item) => categories.includes(item.category));
   const customMatches = customIndexDocuments.filter((item) => categories.includes(item.category));
-  const combined = [...(data ?? []), ...staticMatches, ...customMatches] as AiIndexItem[];
+  const integrationMatches = connectorIndexItems.filter((item) => categories.includes(item.category));
+  const lessonMatches = campLessonRecordsToIndexItems(lessonPlanRecords).filter((item) =>
+    categories.includes(item.category)
+  );
+  const combined = [
+    ...(data ?? []),
+    ...staticMatches,
+    ...customMatches,
+    ...integrationMatches,
+    ...lessonMatches
+  ] as AiIndexItem[];
 
   return combined
     .map((item: AiIndexItem) => {
