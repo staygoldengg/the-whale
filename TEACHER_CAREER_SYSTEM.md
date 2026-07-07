@@ -8,17 +8,22 @@ The Whale has transformed into a **comprehensive teaching career tracking and AI
 
 ## 🎯 Core Features
 
-### 1. **Career Progression System**
-Teachers progress through 7 distinct career levels with personalized content for each stage:
+### 1. **Career Progression System - 30 Years of Growth**
+Teachers progress through 12 distinct career levels spanning 30 years:
 
 ```
-🌱 Rookie (0-1 years)     → New teacher foundations
-🚀 Novice (1-3 years)     → Building confidence
-📚 Apprentice (3-5 years) → Developing expertise
-⭐ Practitioner (5-8 years) → Skilled professional
-🏆 Expert (8-12 years)    → Master-level educator
-👑 Veteran (12-15 years)  → Wise mentor
-✨ Master (15+ years)     → Teaching legend
+🌱 Rookie (0-2 years)           → New teacher foundations
+🚀 Novice (2-4 years)           → Learning basics
+📚 Apprentice (4-6 years)       → Building confidence
+⭐ Practitioner (6-9 years)     → Skilled professional
+🏆 Expert (9-12 years)          → Mastery level
+👑 Master (12-15 years)         → Wise mentor
+👑 Master Educator (15-18 yrs)  → Advanced mentor
+👑👑 Senior Master (18-21 yrs)  → Transformational leader
+💎 Master IV (21-24 years)      → System change agent
+💎 Master V (24-27 years)       → Education innovator
+✨ Master VI (27-30 years)      → Teaching legend
+🌟 Legendary Master (30+ years) → Hall of fame educator
 ```
 
 **Features:**
@@ -27,6 +32,7 @@ Teachers progress through 7 distinct career levels with personalized content for
 - Experience points (XP) system
 - Activity streaks for consistency rewards
 - Milestone tracking and rewards
+- **NEW:** Brightwheel certification tracking and CEU integration
 
 ### 2. **Gamification System**
 **Awards XP for activities:**

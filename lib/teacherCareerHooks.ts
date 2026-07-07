@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { careerManager, CareerStats, Achievement, Streak, SkillArea } from '@/lib/careerProgressionManager';
 import { aiLearningEngine, AIRecommendation, SystemInsight, LearningState, TeacherAction } from '@/lib/reinforcementLearningAI';
 import { teamManager, Team, Collaboration, MentorshipPair, SharedResource } from '@/lib/teamCollaborationManager';
+import { brightwheelManager, BrightwheelProfile, BrightwheelCourse, BrightwheelCertification } from '@/lib/brightwheelIntegration';
 
 /**
  * Hook: Track career progression
@@ -240,15 +241,40 @@ export function useLearningPaths(teacherId: string) {
         { id: 'systemic-change', title: 'School Improvement Initiatives', icon: '🌟', difficulty: 7 },
         { id: 'mentorship-mastery', title: 'Advanced Mentorship Strategies', icon: '🏆', difficulty: 6 }
       ],
-      veteran: [
+      master: [
         { id: 'thought-leadership', title: 'Becoming a Thought Leader', icon: '📢', difficulty: 8 },
         { id: 'legacy-building', title: 'Building Your Teaching Legacy', icon: '👑', difficulty: 8 },
         { id: 'district-leadership', title: 'District-Level Leadership', icon: '🌐', difficulty: 8 }
       ],
-      master: [
-        { id: 'wisdom-sharing', title: 'Sharing Your Wisdom', icon: '✨', difficulty: 9 },
-        { id: 'research-contribution', title: 'Contributing to Education Research', icon: '🔬', difficulty: 9 },
+      master_2: [
+        { id: 'master-educator', title: 'Master Educator Development', icon: '👑', difficulty: 9 },
+        { id: 'advanced-mentoring', title: 'Advanced Teacher Mentoring', icon: '🧑‍🏫', difficulty: 9 },
+        { id: 'curriculum-leadership', title: 'Curriculum Leadership', icon: '📚', difficulty: 9 }
+      ],
+      master_3: [
+        { id: 'transformational-leadership', title: 'Transformational Leadership', icon: '👑👑', difficulty: 9 },
+        { id: 'innovation-leadership', title: 'Leading Innovation in Education', icon: '💡', difficulty: 10 },
+        { id: 'systemic-advocacy', title: 'Systemic Education Advocacy', icon: '🗣️', difficulty: 10 }
+      ],
+      master_4: [
+        { id: 'system-change', title: 'System Change Leadership', icon: '💎', difficulty: 10 },
+        { id: 'policy-influence', title: 'Education Policy Influence', icon: '📋', difficulty: 10 },
         { id: 'movement-building', title: 'Building Educational Movements', icon: '🌍', difficulty: 10 }
+      ],
+      master_5: [
+        { id: 'innovation-development', title: 'Innovation & Development', icon: '💎', difficulty: 10 },
+        { id: 'research-leadership', title: 'Leading Education Research', icon: '🔬', difficulty: 10 },
+        { id: 'network-building', title: 'Building Global Education Networks', icon: '🌐', difficulty: 10 }
+      ],
+      master_6: [
+        { id: 'legacy-documentation', title: 'Documenting Your Legacy', icon: '✨', difficulty: 10 },
+        { id: 'wisdom-sharing', title: 'Sharing Your Wisdom', icon: '📖', difficulty: 10 },
+        { id: 'hall-of-fame', title: 'Hall of Fame Recognition', icon: '🏆', difficulty: 10 }
+      ],
+      legendary_master: [
+        { id: 'eternal-legacy', title: 'Creating an Eternal Legacy', icon: '🌟', difficulty: 10 },
+        { id: 'visionary-work', title: 'Visionary Education Work', icon: '✨', difficulty: 10 },
+        { id: 'influence-scope', title: 'Expanding Global Influence', icon: '🌍', difficulty: 10 }
       ]
     };
 
@@ -340,5 +366,75 @@ export function useMentorshipTracker(mentorshipId: string) {
     sessionHistory: getSessionHistory(),
     focusAreas: getFocusAreas(),
     progressMetrics: getProgressMetrics()
+  };
+}
+
+/**
+ * Hook: Brightwheel integration and tracking
+ */
+export function useBrightwheelIntegration(teacherId: string) {
+  const [profile, setProfile] = useState<BrightwheelProfile | null>(null);
+  const [courses, setCourses] = useState<BrightwheelCourse[]>([]);
+  const [certifications, setCertifications] = useState<BrightwheelCertification[]>([]);
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = brightwheelManager.subscribe(() => {
+      const profile = brightwheelManager.getProfile(teacherId);
+      setProfile(profile || null);
+      
+      if (profile) {
+        setCourses(profile.courses);
+        setCertifications(profile.certifications);
+        setStats(profile.stats);
+      }
+    });
+
+    // Initial load
+    const profile = brightwheelManager.getProfile(teacherId);
+    setProfile(profile || null);
+    if (profile) {
+      setCourses(profile.courses);
+      setCertifications(profile.certifications);
+      setStats(profile.stats);
+    }
+
+    return unsubscribe;
+  }, [teacherId]);
+
+  const syncProfile = useCallback(async (brightwheelEmail: string) => {
+    return await brightwheelManager.syncBrightwheelProfile(teacherId, brightwheelEmail);
+  }, [teacherId]);
+
+  const addCourse = useCallback((course: BrightwheelCourse) => {
+    brightwheelManager.addCourse(teacherId, course);
+  }, [teacherId]);
+
+  const addCertification = useCallback((certification: BrightwheelCertification) => {
+    brightwheelManager.addCertification(teacherId, certification);
+  }, [teacherId]);
+
+  const updateCourseStatus = useCallback((
+    courseId: string, 
+    status: 'in_progress' | 'completed' | 'not_started',
+    completionDate?: string
+  ) => {
+    brightwheelManager.updateCourseStatus(teacherId, courseId, status, completionDate);
+  }, [teacherId]);
+
+  const getCeuBoost = useCallback((): number => {
+    return brightwheelManager.calculateCeuBoost(teacherId, '');
+  }, [teacherId]);
+
+  return {
+    profile,
+    courses,
+    certifications,
+    stats,
+    syncProfile,
+    addCourse,
+    addCertification,
+    updateCourseStatus,
+    ceuBoost: getCeuBoost()
   };
 }

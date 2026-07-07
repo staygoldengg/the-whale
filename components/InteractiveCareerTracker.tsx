@@ -21,7 +21,7 @@ const CAREER_MILESTONES: Record<TeacherLevel, CareerMilestoneUI> = {
     emoji: '🌱',
     title: 'Rookie',
     subtitle: 'Just Starting',
-    yearsRange: 'Year 0-1',
+    yearsRange: 'Year 0-2',
     color: 'from-blue-400 to-blue-600'
   },
   novice: {
@@ -29,7 +29,7 @@ const CAREER_MILESTONES: Record<TeacherLevel, CareerMilestoneUI> = {
     emoji: '🚀',
     title: 'Novice',
     subtitle: 'Learning Basics',
-    yearsRange: 'Year 1-3',
+    yearsRange: 'Year 2-4',
     color: 'from-cyan-400 to-cyan-600'
   },
   apprentice: {
@@ -37,7 +37,7 @@ const CAREER_MILESTONES: Record<TeacherLevel, CareerMilestoneUI> = {
     emoji: '📚',
     title: 'Apprentice',
     subtitle: 'Building Confidence',
-    yearsRange: 'Year 3-5',
+    yearsRange: 'Year 4-6',
     color: 'from-purple-400 to-purple-600'
   },
   practitioner: {
@@ -45,7 +45,7 @@ const CAREER_MILESTONES: Record<TeacherLevel, CareerMilestoneUI> = {
     emoji: '⭐',
     title: 'Practitioner',
     subtitle: 'Skilled Professional',
-    yearsRange: 'Year 5-8',
+    yearsRange: 'Year 6-9',
     color: 'from-pink-400 to-pink-600'
   },
   expert: {
@@ -53,24 +53,64 @@ const CAREER_MILESTONES: Record<TeacherLevel, CareerMilestoneUI> = {
     emoji: '🏆',
     title: 'Expert',
     subtitle: 'Mastery Level',
-    yearsRange: 'Year 8-12',
+    yearsRange: 'Year 9-12',
     color: 'from-orange-400 to-orange-600'
   },
-  veteran: {
-    level: 'veteran',
+  master: {
+    level: 'master',
     emoji: '👑',
-    title: 'Veteran',
+    title: 'Master',
     subtitle: 'Wise Mentor',
     yearsRange: 'Year 12-15',
     color: 'from-red-400 to-red-600'
   },
-  master: {
-    level: 'master',
+  master_2: {
+    level: 'master_2',
+    emoji: '👑',
+    title: 'Master Educator',
+    subtitle: 'Advanced Mentor',
+    yearsRange: 'Year 15-18',
+    color: 'from-red-500 to-rose-600'
+  },
+  master_3: {
+    level: 'master_3',
+    emoji: '👑👑',
+    title: 'Senior Master',
+    subtitle: 'Transformational Leader',
+    yearsRange: 'Year 18-21',
+    color: 'from-rose-500 to-pink-600'
+  },
+  master_4: {
+    level: 'master_4',
+    emoji: '💎',
+    title: 'Master IV',
+    subtitle: 'System Change Agent',
+    yearsRange: 'Year 21-24',
+    color: 'from-indigo-400 to-indigo-600'
+  },
+  master_5: {
+    level: 'master_5',
+    emoji: '💎',
+    title: 'Master V',
+    subtitle: 'Education Innovator',
+    yearsRange: 'Year 24-27',
+    color: 'from-violet-400 to-violet-600'
+  },
+  master_6: {
+    level: 'master_6',
     emoji: '✨',
-    title: 'Master',
+    title: 'Master VI',
     subtitle: 'Teaching Legend',
-    yearsRange: 'Year 15+',
+    yearsRange: 'Year 27-30',
     color: 'from-yellow-400 to-yellow-600'
+  },
+  legendary_master: {
+    level: 'legendary_master',
+    emoji: '🌟',
+    title: 'Legendary Master',
+    subtitle: 'Hall of Fame Educator',
+    yearsRange: 'Year 30+',
+    color: 'from-yellow-300 via-orange-300 to-red-300'
   }
 };
 
@@ -85,7 +125,7 @@ const SKILL_CATEGORIES = [
 
 export function InteractiveCareerTracker() {
   const [stats, setStats] = useState<CareerStats | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'skills' | 'achievements' | 'ai-coach' | 'team'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'skills' | 'achievements' | 'ai-coach' | 'team' | 'brightwheel'>('overview');
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
 
@@ -206,7 +246,7 @@ export function InteractiveCareerTracker() {
 
         {/* Tab Navigation */}
         <div className="flex gap-2 flex-wrap">
-          {(['overview', 'skills', 'achievements', 'ai-coach', 'team'] as const).map(tab => (
+          {(['overview', 'skills', 'achievements', 'ai-coach', 'team', 'brightwheel'] as const).map(tab => (
             <LuxuryButton
               key={tab}
               variant={activeTab === tab ? 'primary' : 'outline'}
@@ -218,6 +258,7 @@ export function InteractiveCareerTracker() {
               {tab === 'achievements' && '🏆 Achievements'}
               {tab === 'ai-coach' && '🤖 AI Coach'}
               {tab === 'team' && '👥 Team'}
+              {tab === 'brightwheel' && '🌟 Brightwheel'}
             </LuxuryButton>
           ))}
         </div>
@@ -419,6 +460,95 @@ export function InteractiveCareerTracker() {
                 ))}
               </div>
             </LuxurySection>
+          </div>
+        )}
+
+        {activeTab === 'brightwheel' && (
+          <div className="space-y-6">
+            <LuxurySection
+              title="Brightwheel Professional Development 🌟"
+              subtitle="Track your certifications and continuing education"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <LuxuryCard variant="default" className="p-4">
+                  <LuxuryStat
+                    icon="📚"
+                    label="Courses Completed"
+                    value={25}
+                    unit=""
+                    trend={3}
+                  />
+                </LuxuryCard>
+                <LuxuryCard variant="default" className="p-4">
+                  <LuxuryStat
+                    icon="🎓"
+                    label="CEUs Earned"
+                    value={5.3}
+                    unit=""
+                    trend={0.5}
+                  />
+                </LuxuryCard>
+                <LuxuryCard variant="default" className="p-4">
+                  <LuxuryStat
+                    icon="⏱️"
+                    label="Hours Completed"
+                    value={53.5}
+                    unit=""
+                    trend={8}
+                  />
+                </LuxuryCard>
+                <LuxuryCard variant="default" className="p-4">
+                  <LuxuryStat
+                    icon="🏆"
+                    label="Certifications"
+                    value={6}
+                    unit=""
+                    trend={1}
+                  />
+                </LuxuryCard>
+              </div>
+
+              <LuxurySection title="Recent Courses" subtitle="Completed learning activities">
+                <div className="space-y-3">
+                  {[
+                    { title: 'Using Observation and Assessment to Inform Practice', status: 'In progress', hours: 1, ceus: 0.1 },
+                    { title: 'CDA Preparing to Apply', status: 'In progress', hours: 1, ceus: 0.1 },
+                    { title: 'Experience Assessment Reliability Course', status: 'Completed', hours: 1, ceus: 0.1 },
+                    { title: 'Using Little Learners with Experience Curriculum', status: 'Completed', hours: 1, ceus: 0.1 },
+                    { title: 'Building a Passion for Early Childhood Education', status: 'Completed', hours: 1, ceus: 0.1 }
+                  ].map((course, idx) => (
+                    <LuxuryCard key={idx} variant="glass" className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <LuxuryText variant="label">{course.title}</LuxuryText>
+                          <div className="flex gap-2 mt-2">
+                            <span className={`text-xs px-2 py-1 rounded ${course.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                              {course.status}
+                            </span>
+                            <span className="text-xs text-slate-500">{course.hours}h • {course.ceus} CEUs</span>
+                          </div>
+                        </div>
+                        {course.status === 'Completed' && (
+                          <LuxuryButton variant="outline" size="sm">
+                            View Certificate
+                          </LuxuryButton>
+                        )}
+                      </div>
+                    </LuxuryCard>
+                  ))}
+                </div>
+              </LuxurySection>
+            </LuxurySection>
+
+            <LuxuryCard variant="glass" className="p-6 text-center">
+              <LuxuryText variant="h3">🔗 Connect Brightwheel Account</LuxuryText>
+              <LuxuryText variant="body" className="text-slate-600 mt-2">
+                Sync your Brightwheel courses and certifications automatically
+              </LuxuryText>
+              <LuxuryButton variant="primary" className="mt-4">
+                Connect to Brightwheel
+              </LuxuryButton>
+            </LuxuryCard>
           </div>
         )}
       </div>

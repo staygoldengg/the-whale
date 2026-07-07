@@ -5,13 +5,18 @@
  */
 
 export type TeacherLevel = 
-  | 'rookie'        // Year 0-1: Just starting
-  | 'novice'        // Year 1-3: Learning basics
-  | 'apprentice'    // Year 3-5: Building confidence
-  | 'practitioner'  // Year 5-8: Skilled professional
-  | 'expert'        // Year 8-12: Mastery level
-  | 'veteran'       // Year 12-15: Wise mentor
-  | 'master';       // Year 15+: Legend
+  | 'rookie'           // Year 0-2: Just starting
+  | 'novice'           // Year 2-4: Learning basics
+  | 'apprentice'       // Year 4-6: Building confidence
+  | 'practitioner'     // Year 6-9: Skilled professional
+  | 'expert'           // Year 9-12: Mastery level
+  | 'master'           // Year 12-15: Wise mentor
+  | 'master_2'         // Year 15-18: Master Educator
+  | 'master_3'         // Year 18-21: Senior Master
+  | 'master_4'         // Year 21-24: Master IV
+  | 'master_5'         // Year 24-27: Master V
+  | 'master_6'         // Year 27-30: Master VI
+  | 'legendary_master';  // Year 30+: Legendary Master
 
 export interface CareerMilestone {
   id: string;
@@ -158,13 +163,18 @@ class CareerProgressionManager {
   private updateCareerLevel(): void {
     const years = this.careerStats.yearsOfExperience;
     
-    if (years < 1) this.careerStats.currentTeacherLevel = 'rookie';
-    else if (years < 3) this.careerStats.currentTeacherLevel = 'novice';
-    else if (years < 5) this.careerStats.currentTeacherLevel = 'apprentice';
-    else if (years < 8) this.careerStats.currentTeacherLevel = 'practitioner';
+    if (years < 2) this.careerStats.currentTeacherLevel = 'rookie';
+    else if (years < 4) this.careerStats.currentTeacherLevel = 'novice';
+    else if (years < 6) this.careerStats.currentTeacherLevel = 'apprentice';
+    else if (years < 9) this.careerStats.currentTeacherLevel = 'practitioner';
     else if (years < 12) this.careerStats.currentTeacherLevel = 'expert';
-    else if (years < 15) this.careerStats.currentTeacherLevel = 'veteran';
-    else this.careerStats.currentTeacherLevel = 'master';
+    else if (years < 15) this.careerStats.currentTeacherLevel = 'master';
+    else if (years < 18) this.careerStats.currentTeacherLevel = 'master_2';
+    else if (years < 21) this.careerStats.currentTeacherLevel = 'master_3';
+    else if (years < 24) this.careerStats.currentTeacherLevel = 'master_4';
+    else if (years < 27) this.careerStats.currentTeacherLevel = 'master_5';
+    else if (years < 30) this.careerStats.currentTeacherLevel = 'master_6';
+    else this.careerStats.currentTeacherLevel = 'legendary_master';
   }
 
   /**
