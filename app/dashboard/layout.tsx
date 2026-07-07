@@ -8,6 +8,7 @@ import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { EnhancedMusicPlayer } from '@/components/EnhancedMusicPlayer';
 import { UICustomizationPanel } from '@/components/UICustomizationPanel';
 import { BrandingFooter } from '@/components/BrandingFooter';
+import { GuestModeLayout } from '@/components/GuestModeLayout';
 import { useAppSettings } from '@/components/AppSettingsProvider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <>
+    <GuestModeLayout>
       <div className="whale-shell min-h-screen flex flex-col">
         <TopNav />
         <LaunchSplash />
@@ -48,9 +49,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Customization Panel */}
         <UICustomizationPanel />
       </div>
-      
-      {/* Branding Footer */}
-      <BrandingFooter showBuiltBy showPoweredBy />
-    </>
+    </GuestModeLayout>
   );
 }
