@@ -1,120 +1,156 @@
 import Link from 'next/link';
-import { CoverArt } from '@/components/CoverArt';
+import { LuxuryGradientBg, LuxuryCard, LuxuryButton, LuxuryText, LuxuryDivider, LuxuryBadge, LuxurySection } from '@/components/LuxuryUI';
 import { FuturisticButton, FuturisticBackground, PulsingOrb, AnimatedText } from '@/components/FuturisticUI';
 import { BrandingFooter } from '@/components/BrandingFooter';
 
 export default function HomePage() {
   return (
     <>
-      <main className="whale-shell min-h-screen p-6 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-20 opacity-30">
-          <PulsingOrb size="lg" color="from-blue-400 to-cyan-400" />
-        </div>
-        <div className="absolute bottom-20 left-10 opacity-20">
-          <PulsingOrb size="md" color="from-purple-400 to-pink-400" />
-        </div>
-
-        <div className="relative z-10">
-          <div className="absolute right-6 top-6 rounded-3xl bg-white/90 p-3 shadow-soft backdrop-blur">
-            <Link href="/login" className="whale-muted-button text-sm px-4 py-2">
-              Staff Login
-            </Link>
+      <main className="whale-shell min-h-screen overflow-hidden">
+        <LuxuryGradientBg variant="premium" className="min-h-screen flex flex-col">
+          {/* Decorative elements */}
+          <div className="absolute top-20 right-20 opacity-20">
+            <PulsingOrb size="lg" color="from-blue-400 to-cyan-400" />
+          </div>
+          <div className="absolute bottom-20 left-10 opacity-15">
+            <PulsingOrb size="md" color="from-purple-400 to-pink-400" />
           </div>
 
-          <section className="mx-auto max-w-4xl p-8 text-center">
-            {/* Logo/Icon */}
-            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 text-6xl text-white shadow-lg animate-pulse-glow">
-              🐋
-            </div>
-
-            {/* School branding */}
-            <p className="font-semibold uppercase tracking-widest text-sm text-blue-600 mb-2">
-              Westhampton Day School
-            </p>
-
-            <p className="font-semibold uppercase tracking-wider text-whale-700 mb-3">
-              AI Companion for Educators
-            </p>
-
-            {/* Main heading */}
-            <h1 className="mt-3 text-6xl font-black tracking-tight text-slate-950 mb-4">
-              The <AnimatedText>Whale</AnimatedText>
-            </h1>
-
-            {/* Tagline */}
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-              Generate preschool-safe theme weeks, lesson plans, parent messages, team emails, and more.
-              Built by educators, powered by advanced AI to make your teaching time more impactful.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/dashboard" className="inline-block">
-                <FuturisticButton variant="gradient" size="lg" shimmer>
-                  Open Dashboard
-                </FuturisticButton>
-              </Link>
-              <Link href="/login" className="inline-block">
-                <FuturisticButton variant="secondary" size="lg">
+          <div className="relative z-10 flex-1 flex flex-col">
+            <div className="absolute right-6 top-6 rounded-2xl">
+              <Link href="/login">
+                <LuxuryButton variant="secondary" size="md">
                   Staff Login
-                </FuturisticButton>
+                </LuxuryButton>
               </Link>
             </div>
 
-            {/* Feature section */}
-            <div className="mt-12 rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-8 text-left">
-              <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
-                🚀 Get Started Instantly
-              </p>
-              <h2 className="mt-3 text-4xl font-black text-slate-950">Open in Base Mode</h2>
-              <p className="mt-4 text-slate-700 leading-relaxed">
-                Use The Whale immediately as a guest. No account needed. Staff login unlocks:
-              </p>
-              <ul className="mt-4 space-y-2 text-slate-700">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-1">✓</span>
-                  <span>Save and organize your work</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-1">✓</span>
-                  <span>Personalized AI suggestions</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-1">✓</span>
-                  <span>Brightwheel integration</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-1">✓</span>
-                  <span>Advanced customization</span>
-                </li>
-              </ul>
-            </div>
+<section className="mx-auto max-w-5xl px-6 py-16 text-center flex-1 flex flex-col justify-center">
+              {/* Logo/Icon */}
+              <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 text-7xl text-white shadow-2xl shadow-blue-300/50 animate-pulse-glow">
+                🐋
+              </div>
 
-            {/* Preview */}
-            <div className="mt-10">
-              <CoverArt className="mx-auto h-72 w-full max-w-3xl rounded-2xl border-2 border-slate-200 bg-slate-100 shadow-lg" />
-            </div>
+              {/* School branding */}
+              <LuxuryBadge variant="primary" className="mx-auto mb-6 w-fit">
+                Westhampton Day School
+              </LuxuryBadge>
 
-            {/* Feature highlights */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { icon: '📚', title: 'Lesson Planning', desc: 'AI-powered lesson generation with quality scoring' },
-                { icon: '🎨', title: 'Creative Assets', desc: 'Theme weeks, coloring pages, and parent messages' },
-                { icon: '🔄', title: 'School Brain', desc: 'Central knowledge base for all your resources' }
-              ].map((feature) => (
-                <div
-                  key={feature.title}
-                  className="rounded-xl border border-blue-100 bg-white/70 backdrop-blur p-6 text-center hover:shadow-lg transition-all hover:translate-y-[-2px]"
-                >
-                  <div className="text-4xl mb-3">{feature.icon}</div>
-                  <h3 className="font-bold text-slate-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-slate-600">{feature.desc}</p>
+              <p className="font-semibold uppercase tracking-wider text-blue-600 mb-4">
+                Premium AI Companion for Educators
+              </p>
+
+              {/* Main heading */}
+              <LuxuryText variant="h1" gradient className="mb-6">
+                The <AnimatedText>Whale</AnimatedText>
+              </LuxuryText>
+
+              {/* Tagline */}
+              <p className="mx-auto max-w-2xl text-lg leading-8 text-slate-700 font-medium mb-8">
+                Transform your teaching with AI-powered lesson planning, theme weeks, parent communications, and school management—all designed by educators for educators.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap justify-center gap-4 mb-12">
+                <Link href="/dashboard">
+                  <LuxuryButton variant="primary" size="lg">
+                    ✨ Open Dashboard
+                  </LuxuryButton>
+                </Link>
+                <Link href="/login">
+                  <LuxuryButton variant="outline" size="lg">
+                    Staff Login
+                  </LuxuryButton>
+                </Link>
+              </div>
+
+              <LuxuryDivider className="mb-12" />
+
+              {/* Feature highlights - Luxury cards */}
+              <LuxurySection
+                title="What's Included"
+                subtitle="Everything educators need to create engaging learning experiences"
+                className="mb-12"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <LuxuryCard variant="glass" hover className="p-8 text-left">
+                    <div className="text-5xl mb-4">📚</div>
+                    <LuxuryText variant="h3">Lesson Planning Suite</LuxuryText>
+                    <p className="text-slate-600 mt-3 leading-relaxed">
+                      AI-powered lesson generation with quality scoring, materials lists, and pedagogical alignment to standards.
+                    </p>
+                  </LuxuryCard>
+
+                  <LuxuryCard variant="glass" hover className="p-8 text-left">
+                    <div className="text-5xl mb-4">🎨</div>
+                    <LuxuryText variant="h3">Creative Assets</LuxuryText>
+                    <p className="text-slate-600 mt-3 leading-relaxed">
+                      Theme weeks, coloring pages, parent messages, team emails—all generated to match your school's voice.
+                    </p>
+                  </LuxuryCard>
+
+                  <LuxuryCard variant="glass" hover className="p-8 text-left">
+                    <div className="text-5xl mb-4">🌍</div>
+                    <LuxuryText variant="h3">School Dashboard</LuxuryText>
+                    <p className="text-slate-600 mt-3 leading-relaxed">
+                      Unified hub for attendance gamification, nutrition tracking, weather insights, and learning pathways.
+                    </p>
+                  </LuxuryCard>
+
+                  <LuxuryCard variant="glass" hover className="p-8 text-left">
+                    <div className="text-5xl mb-4">🧠</div>
+                    <LuxuryText variant="h3">School Brain</LuxuryText>
+                    <p className="text-slate-600 mt-3 leading-relaxed">
+                      Central knowledge base indexing 50+ curated teaching materials, organized by subject and grade level.
+                    </p>
+                  </LuxuryCard>
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
+              </LuxurySection>
+
+              {/* Get Started Card */}
+              <LuxuryCard variant="elevated" className="p-10 mb-12 bg-gradient-to-br from-white to-blue-50">
+                <LuxuryText variant="h2" className="mb-4">🚀 Start Free Today</LuxuryText>
+                <p className="text-slate-700 mb-6 max-w-2xl mx-auto leading-relaxed">
+                  No account required. Open as a guest and explore the full dashboard. Create a staff account anytime to save your work and unlock personalization.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/dashboard">
+                    <LuxuryButton variant="gradient" size="lg">
+                      Launch Dashboard
+                    </LuxuryButton>
+                  </Link>
+                  <Link href="/login">
+                    <LuxuryButton variant="secondary" size="lg">
+                      Sign In
+                    </LuxuryButton>
+                  </Link>
+                </div>
+              </LuxuryCard>
+
+              {/* Benefits Grid */}
+              <LuxurySection
+                title="Why Educators Love The Whale"
+                className="mb-12"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { icon: '⚡', text: 'Save 5+ hours per week on planning' },
+                    { icon: '🎯', text: 'Aligned to learning standards' },
+                    { icon: '🔒', text: 'Preschool-safe content' },
+                    { icon: '💻', text: 'Works offline' },
+                    { icon: '📱', text: 'Mobile app ready' },
+                    { icon: '🎉', text: 'Free tier available' },
+                  ].map((benefit) => (
+                    <div key={benefit.text} className="flex items-center gap-3 text-left">
+                      <span className="text-3xl">{benefit.icon}</span>
+                      <p className="text-slate-700 font-medium">{benefit.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </LuxurySection>
+            </section>
+          </div>
+        </LuxuryGradientBg>
       </main>
 
       {/* Branding Footer */}
