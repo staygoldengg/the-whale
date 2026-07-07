@@ -135,15 +135,8 @@ export function WDSHeroLanding() {
           <div className="grid md:grid-cols-3 gap-6">
             {WESTHAMPTON_INFO.values.map((value, i) => (
               <div key={i} className="text-center">
-                <div className="text-5xl mb-3">
-                  {value === 'Nurturing' && '🤝'}
-                  {value === 'Safe' && '🛡️'}
-                  {value === 'Respectful' && '🙏'}
-                  {value === 'Creative' && '🎨'}
-                  {value === 'Community-Focused' && '🌍'}
-                  {value === 'Excellence' && '⭐'}
-                </div>
-                <h4 className="text-white font-semibold">{value}</h4>
+                <div className="text-5xl mb-3">{value.emoji}</div>
+                <h4 className="text-white font-semibold">{value.name}</h4>
               </div>
             ))}
           </div>

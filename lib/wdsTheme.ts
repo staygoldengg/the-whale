@@ -65,8 +65,27 @@ export const WESTHAMPTON_INFO = {
   phone: '(804) 282-7459',
   email: 'info@westhamptondayschool.org',
   website: 'westhamptondayschool.org',
-  values: ['Nurturing', 'Safe', 'Respectful', 'Creative', 'Community-Focused', 'Excellence'],
-  accreditation: 'Nationally Accredited - NACCRRA'
+  logo: {
+    emoji: '🐋',
+    colors: {
+      primary: '#1a365d', // Navy
+      accent: '#059669'    // Emerald
+    },
+    description: 'Whale mascot representing strength, wisdom, and community'
+  },
+  values: [
+    { name: 'Nurturing', emoji: '🤝' },
+    { name: 'Safe', emoji: '🛡️' },
+    { name: 'Respectful', emoji: '🙏' },
+    { name: 'Creative', emoji: '🎨' },
+    { name: 'Community', emoji: '🌍' },
+    { name: 'Excellence', emoji: '⭐' }
+  ],
+  accreditation: 'Nationally Accredited - NACCRRA',
+  socialLinks: {
+    facebook: 'https://facebook.com/westhamptondayschool',
+    instagram: 'https://instagram.com/westhamptondayschool'
+  }
 };
 
 export type ColorPalette = typeof WDS_COLORS;

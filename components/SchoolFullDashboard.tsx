@@ -14,6 +14,7 @@ import {
   LessonPlanIdeas,
   GlobalEarlyLearningTrends,
 } from './LearningPathwaysAndTrends';
+import { WDSEducationalVideoPlayer } from './WDSEducationalVideoPlayer';
 
 /**
  * SchoolDashboard Component
@@ -28,11 +29,12 @@ import {
  * - Gamified attendance
  */
 export function SchoolDashboard() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'learning' | 'daily' | 'trends'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'learning' | 'professional' | 'daily' | 'trends'>('overview');
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '🎓' },
     { id: 'learning', label: 'Learning', icon: '📚' },
+    { id: 'professional', label: 'Professional Growth', icon: '🎓' },
     { id: 'daily', label: 'Daily', icon: '📅' },
     { id: 'trends', label: 'Trends', icon: '🌍' },
   ];
@@ -120,6 +122,13 @@ export function SchoolDashboard() {
         <div className="space-y-8">
           <LearningPathways />
           <LessonPlanIdeas />
+        </div>
+      )}
+
+      {/* Professional Growth Tab */}
+      {activeTab === 'professional' && (
+        <div className="space-y-8">
+          <WDSEducationalVideoPlayer />
         </div>
       )}
 

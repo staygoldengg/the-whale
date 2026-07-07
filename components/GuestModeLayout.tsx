@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { guestModeManager } from '@/lib/guestModeManager';
 import { WESTHAMPTON_INFO } from '@/lib/wdsTheme';
+import { Save, LogIn } from 'lucide-react';
 
 interface GuestModeLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export function GuestModeLayout({ children }: GuestModeLayoutProps) {
   const [isGuest, setIsGuest] = useState(true);
   const [sessionStats, setSessionStats] = useState<any>(null);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     const isGuestMode = guestModeManager.isGuestMode();
@@ -26,11 +28,15 @@ export function GuestModeLayout({ children }: GuestModeLayoutProps) {
   }, []);
 
   useEffect(() => {
-    // Show save prompt after 5+ actions
-    if (sessionStats?.actionsPerformed >= 5) {
+    // Show save prompt after 8+ actions
+    if (sessionStats?.actionsPerformed >= 8 && !showSavePrompt) {
       setShowSavePrompt(true);
     }
-  }, [sessionStats?.actionsPerformed]);
+    // Update banner visibility after 10+ actions
+    if (sessionStats?.actionsPerformed >= 10) {
+      setShowBanner(true);
+    }
+  }, [sessionStats?.actionsPerformed, showSavePrompt]);
 
   if (!isGuest) {
     return <>{children}</>;
@@ -38,94 +44,76 @@ export function GuestModeLayout({ children }: GuestModeLayoutProps) {
 
   return (
     <div>
-      {/* Guest Mode Header Banner */}
-      <div className="sticky top-0 z-40 bg-gradient-to-r from-amber-400 to-rose-300 text-slate-900 px-4 py-3 shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">👤</span>
-            <div>
-              <p className="font-bold">Guest Mode Active</p>
-              <p className="text-xs">All features available • Sign in to save your work</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {sessionStats && (
-              <div className="hidden md:flex gap-4 text-sm">
-                <div>
-                  <span className="font-semibold">{sessionStats.actionsPerformed}</span> actions
-                </div>
-                <div>
-                  <span className="font-semibold">{sessionStats.durationMinutes}</span> min
-                </div>
+      {/* Compact Guest Mode Bar - Shows after 10+ actions */}
+      {showBanner && (
+        <div className="sticky top-0 z-35 bg-gradient-to-r from-emerald-50/80 to-teal-50/80 backdrop-blur-sm border-b border-emerald-200/50 px-4 py-2 shadow-sm transition-all duration-300">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-lg">👤</span>
+              <div className="hidden sm:block">
+                <p className="font-semibold text-emerald-900">Guest Mode</p>
+                <p className="text-xs text-emerald-700 opacity-75">Actions: {sessionStats?.actionsPerformed} • {sessionStats?.durationMinutes}m</p>
               </div>
-            )}
+            </div>
             <button
               onClick={() => setShowSavePrompt(true)}
-              className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold"
+              className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:shadow-md transition font-semibold text-sm flex items-center gap-2"
             >
-              Save Work 💾
+              <Save size={14} />
+              <span className="hidden sm:inline">Save Work</span>
             </button>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       {children}
 
       {/* Save Prompt Modal */}
       {showSavePrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-5">
             <div className="text-center">
-              <div className="text-5xl mb-3">💾</div>
-              <h3 className="text-2xl font-bold text-slate-900">Save Your Progress</h3>
-              <p className="text-slate-600 mt-2">
-                You&apos;ve done great work! Sign in to save everything you&apos;ve accomplished.
+              <div className="text-5xl mb-4">💾</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Save Your Progress</h3>
+              <p className="text-sm text-slate-600 mt-2">
+                You&apos;ve made great progress! Sign in to save all your work.
               </p>
             </div>
 
             {sessionStats && (
-              <div className="bg-gradient-to-br from-blue-50 to-emerald-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Actions Performed:</span>
-                  <span className="font-bold text-blue-600">{sessionStats.actionsPerformed}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Session Duration:</span>
-                  <span className="font-bold text-emerald-600">{sessionStats.durationMinutes} min</span>
-                </div>
-                {sessionStats.dataItems.credentials > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Credentials:</span>
-                    <span className="font-bold text-purple-600">{sessionStats.dataItems.credentials}</span>
+              <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 rounded-lg p-4 space-y-3 border border-emerald-200/50">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-emerald-600">{sessionStats.actionsPerformed}</div>
+                    <div className="text-xs text-slate-600 mt-1">Actions</div>
                   </div>
-                )}
-                {sessionStats.dataItems.skillPoints > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Skill Achievements:</span>
-                    <span className="font-bold text-amber-600">{sessionStats.dataItems.skillPoints}</span>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-teal-600">{sessionStats.durationMinutes}m</div>
+                    <div className="text-xs text-slate-600 mt-1">Duration</div>
                   </div>
-                )}
+                </div>
               </div>
             )}
 
             <div className="space-y-3">
               <button
                 onClick={() => window.location.href = '/login'}
-                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg transition"
+                className="w-full px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg transition flex items-center justify-center gap-2"
               >
-                Sign In to Save 🔐
+                <LogIn size={16} />
+                Sign In to Save
               </button>
               <button
                 onClick={() => setShowSavePrompt(false)}
-                className="w-full px-6 py-3 border-2 border-slate-300 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition"
+                className="w-full px-6 py-2.5 border-2 border-slate-200 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition text-sm"
               >
-                Continue as Guest
+                Keep Working as Guest
               </button>
             </div>
 
             <p className="text-xs text-slate-500 text-center">
-              Your guest data is stored locally and will be lost if you clear browser storage.
+              Your work is stored locally. Sign in anytime to save permanently.
             </p>
           </div>
         </div>
