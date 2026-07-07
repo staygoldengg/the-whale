@@ -35,3 +35,5 @@ release/
 
 # Lockfiles (optional to ignore or keep)
 # package-lock.json
+.vercel
+.env*
