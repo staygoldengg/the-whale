@@ -135,3 +135,74 @@ button, input, textarea, select { font: inherit; }
 	backdrop-filter: blur(10px) saturate(180%);
 	@apply bg-white/30 border border-white/20;
 }
+
+/* Dashboard Enhancements */
+.dashboard-card {
+	@apply rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 transition-all hover:shadow-md;
+}
+
+.dashboard-card-highlight {
+	@apply bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200;
+}
+
+.dashboard-section {
+	@apply space-y-6;
+}
+
+/* Smooth Card Transitions */
+.card-hover {
+	@apply transform transition-all duration-300 hover:scale-105 hover:shadow-lg;
+}
+
+/* Status Indicators */
+.status-badge-pending {
+	@apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700;
+}
+
+.status-badge-progress {
+	@apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700;
+}
+
+.status-badge-complete {
+	@apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-primary {
+	@apply bg-gradient-to-br from-blue-600 to-indigo-600;
+}
+
+.bg-gradient-success {
+	@apply bg-gradient-to-br from-green-500 to-emerald-600;
+}
+
+.bg-gradient-warning {
+	@apply bg-gradient-to-br from-yellow-500 to-orange-600;
+}
+
+/* Focus States */
+.focus-ring-primary {
+	@apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Text Utilities */
+.text-gradient {
+	@apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+/* Icon Wrappers */
+.icon-wrapper-primary {
+	@apply p-2 rounded-lg bg-blue-100;
+}
+
+.icon-wrapper-success {
+	@apply p-2 rounded-lg bg-green-100;
+}
+
+.icon-wrapper-warning {
+	@apply p-2 rounded-lg bg-yellow-100;
+}
+
+.icon-wrapper-danger {
+	@apply p-2 rounded-lg bg-red-100;
+}
