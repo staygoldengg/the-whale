@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, Clock, Users, Target, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, Clock, Users, Target, AlertCircle, CheckCircle2, Lightbulb, BookOpen, Zap } from 'lucide-react';
 
 export interface LessonActivity {
   id: string;
@@ -10,8 +10,14 @@ export interface LessonActivity {
   duration?: number; // in minutes
   groupSize?: string;
   objectives?: string[];
-  materials?: string[];
+  materials?: { included: string[]; notIncluded: string[] };
+  standards?: string[]; // KDI or learning standards
+  skills?: { name: string; icon?: string }[];
   status?: 'completed' | 'in-progress' | 'pending';
+  location?: 'indoor' | 'outdoor' | 'both';
+  ageRange?: string;
+  teachingTips?: string;
+  assessmentTips?: string;
 }
 
 export interface LessonSection {
@@ -24,7 +30,7 @@ export interface LessonSection {
 }
 
 /**
- * LessonActivityCard: Display a single lesson activity
+ * LessonActivityCard: Display a single lesson activity with rich pedagogical content
  */
 export function LessonActivityCard({
   activity,
@@ -39,86 +45,225 @@ export function LessonActivityCard({
   onStatusChange?: (id: string, status: LessonActivity['status']) => void;
   className?: string;
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<'teaching' | 'assessing'>('teaching');
+
   return (
-    <div className={`rounded-lg bg-white p-4 border border-slate-200 hover:border-blue-300 transition-colors ${className}`}>
-      <div className="flex items-start justify-between mb-3">
-        <h4 className="font-bold text-slate-900">{activity.title}</h4>
-        {activity.status && (
-          <select
-            value={activity.status}
-            onChange={(e) => onStatusChange?.(activity.id, e.target.value as any)}
-            className="text-xs font-bold px-2 py-1 rounded-full bg-slate-100 border-0 cursor-pointer"
-          >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
+    <div className={`rounded-xl bg-white border border-slate-200 overflow-hidden hover:shadow-md transition-all ${className}`}>
+      {/* Header */}
+      <div className="p-4 border-b border-slate-200 hover:bg-slate-50 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <h4 className="font-bold text-slate-900 text-lg">{activity.title}</h4>
+            {activity.ageRange && (
+              <p className="text-xs text-slate-600 mt-1">{activity.ageRange}</p>
+            )}
+          </div>
+          {activity.status && (
+            <select
+              onClick={(e) => e.stopPropagation()}
+              value={activity.status}
+              onChange={(e) => onStatusChange?.(activity.id, e.target.value as any)}
+              className="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-700 border-0 cursor-pointer"
+            >
+              <option value="pending">○ Pending</option>
+              <option value="in-progress">⟳ In Progress</option>
+              <option value="completed">✓ Completed</option>
+            </select>
+          )}
+        </div>
+
+        {/* Quick Info Row */}
+        <div className="flex flex-wrap gap-4 text-sm">
+          {activity.duration && (
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              <Clock className="w-4 h-4 text-orange-600" />
+              {activity.duration} min
+            </div>
+          )}
+          {activity.groupSize && (
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              <Users className="w-4 h-4 text-purple-600" />
+              {activity.groupSize}
+            </div>
+          )}
+          {activity.location && (
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              📍 {activity.location === 'both' ? 'Indoor/Outdoor' : activity.location}
+            </div>
+          )}
+        </div>
+
+        {activity.description && (
+          <p className="text-sm text-slate-600 mt-3 leading-relaxed">{activity.description}</p>
         )}
+
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex gap-2">
+            {activity.skills && activity.skills.length > 0 && (
+              <div className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-bold">
+                {activity.skills.length} skills
+              </div>
+            )}
+            {activity.standards && activity.standards.length > 0 && (
+              <div className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-bold">
+                {activity.standards.length} standards
+              </div>
+            )}
+          </div>
+          <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+        </div>
       </div>
 
-      {activity.description && (
-        <p className="text-sm text-slate-600 mb-3">{activity.description}</p>
-      )}
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="space-y-0">
+          {/* Supplies Section */}
+          {activity.materials && (activity.materials.included.length > 0 || activity.materials.notIncluded.length > 0) && (
+            <div className="px-4 py-4 border-t border-slate-200 bg-slate-50">
+              <h5 className="font-bold text-slate-900 mb-3">Supplies</h5>
+              <div className="grid grid-cols-2 gap-4">
+                {activity.materials.included.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-green-700 mb-2">Included in subscription box</p>
+                    <ul className="space-y-1">
+                      {activity.materials.included.map((mat, idx) => (
+                        <li key={idx} className="text-sm text-slate-700">• {mat}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {activity.materials.notIncluded.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-slate-700 mb-2">Not included</p>
+                    <ul className="space-y-1">
+                      {activity.materials.notIncluded.map((mat, idx) => (
+                        <li key={idx} className="text-sm text-slate-700">• {mat}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-      <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
-        {activity.duration && (
-          <div className="flex items-center gap-1 text-slate-600">
-            <Clock className="w-4 h-4" />
-            {activity.duration} min
-          </div>
-        )}
-        {activity.groupSize && (
-          <div className="flex items-center gap-1 text-slate-600">
-            <Users className="w-4 h-4" />
-            {activity.groupSize}
-          </div>
-        )}
-      </div>
+          {/* Teaching/Assessing Tabs */}
+          {(activity.teachingTips || activity.assessmentTips) && (
+            <div className="px-4 py-4 border-t border-slate-200">
+              <div className="flex gap-4 mb-4 border-b border-slate-200">
+                <button
+                  onClick={() => setActiveTab('teaching')}
+                  className={`pb-2 font-bold text-sm transition-colors ${
+                    activeTab === 'teaching'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Teaching
+                </button>
+                <button
+                  onClick={() => setActiveTab('assessing')}
+                  className={`pb-2 font-bold text-sm transition-colors ${
+                    activeTab === 'assessing'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Assessing
+                </button>
+              </div>
 
-      {(activity.objectives?.length || 0) > 0 && (
-        <div className="mb-3 space-y-1">
-          <p className="text-xs font-bold text-slate-700 flex items-center gap-1">
-            <Target className="w-3 h-3" /> Objectives
-          </p>
-          <ul className="text-xs text-slate-600 space-y-0.5">
-            {activity.objectives?.map((obj, idx) => (
-              <li key={idx} className="ml-4">• {obj}</li>
-            ))}
-          </ul>
+              {activeTab === 'teaching' && activity.teachingTips && (
+                <div className="space-y-2">
+                  <h6 className="font-bold text-slate-900 text-sm">Play Together</h6>
+                  <p className="text-sm text-slate-700 leading-relaxed">{activity.teachingTips}</p>
+                </div>
+              )}
+
+              {activeTab === 'assessing' && activity.assessmentTips && (
+                <div className="space-y-2">
+                  <h6 className="font-bold text-slate-900 text-sm">Observe</h6>
+                  <ul className="space-y-1.5">
+                    {activity.assessmentTips.split('\n').map((tip, idx) => (
+                      <li key={idx} className="text-sm text-slate-700 flex gap-2">
+                        <span className="text-slate-400">•</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Skills Section */}
+          {activity.skills && activity.skills.length > 0 && (
+            <div className="px-4 py-4 border-t border-slate-200 bg-slate-50">
+              <h5 className="font-bold text-slate-900 mb-3">Skills</h5>
+              <div className="flex flex-wrap gap-2">
+                {activity.skills.map((skill, idx) => (
+                  <div key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg border border-slate-200">
+                    <span className="text-base">{skill.icon || '✓'}</span>
+                    <span className="text-sm font-semibold text-slate-700">{skill.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Standards/KDI Section */}
+          {activity.standards && activity.standards.length > 0 && (
+            <div className="px-4 py-4 border-t border-slate-200">
+              <h5 className="font-bold text-slate-900 mb-3">Learning Standards</h5>
+              <ul className="space-y-2">
+                {activity.standards.map((standard, idx) => (
+                  <li key={idx} className="text-sm text-slate-700 flex gap-2">
+                    <span className="text-blue-600 font-bold">KDI</span>
+                    <span>{standard}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Objectives Section */}
+          {activity.objectives && activity.objectives.length > 0 && (
+            <div className="px-4 py-4 border-t border-slate-200 bg-slate-50">
+              <h5 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <Target className="w-4 h-4" /> Learning Objectives
+              </h5>
+              <ul className="space-y-1.5">
+                {activity.objectives.map((obj, idx) => (
+                  <li key={idx} className="text-sm text-slate-700 flex gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>{obj}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 p-4 border-t border-slate-200 bg-slate-50">
+            {onEdit && (
+              <button
+                onClick={() => onEdit(activity)}
+                className="flex-1 text-sm font-bold text-blue-600 hover:text-blue-700 py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                ✎ Edit
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={() => onDelete(activity.id)}
+                className="flex-1 text-sm font-bold text-red-600 hover:text-red-700 py-2 px-3 rounded-lg hover:bg-red-50 transition-colors"
+              >
+                ✕ Delete
+              </button>
+            )}
+          </div>
         </div>
       )}
-
-      {(activity.materials?.length || 0) > 0 && (
-        <div className="mb-3 space-y-1">
-          <p className="text-xs font-bold text-slate-700">Materials</p>
-          <div className="flex flex-wrap gap-1">
-            {activity.materials?.map((mat, idx) => (
-              <span key={idx} className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded">
-                {mat}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="flex gap-2 pt-2 border-t border-slate-100">
-        {onEdit && (
-          <button
-            onClick={() => onEdit(activity)}
-            className="flex-1 text-xs font-bold text-blue-600 hover:text-blue-700 py-1"
-          >
-            Edit
-          </button>
-        )}
-        {onDelete && (
-          <button
-            onClick={() => onDelete(activity.id)}
-            className="flex-1 text-xs font-bold text-red-600 hover:text-red-700 py-1"
-          >
-            Delete
-          </button>
-        )}
-      </div>
     </div>
   );
 }
