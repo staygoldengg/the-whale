@@ -8,9 +8,18 @@ import { OnboardingFlow } from '@/components/OnboardingFlow';
 import { EnhancedMusicPlayer } from '@/components/EnhancedMusicPlayer';
 import { UICustomizationPanel } from '@/components/UICustomizationPanel';
 import { BrandingFooter } from '@/components/BrandingFooter';
+import { useAppSettings } from '@/components/AppSettingsProvider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { settings, setShowOnboarding, setHasSeenOnboarding } = useAppSettings();
+
   useEffect(() => {
+    // Only show onboarding on first visit (first time this user loads the app)
+    if (!settings.hasSeenOnboarding && !settings.showOnboarding) {
+      // First time ever - show onboarding
+      setShowOnboarding(true);
+    }
+
     if (!document.cookie.includes('guest=true')) {
       document.cookie = 'guest=true; path=/; max-age=604800; samesite=lax';
     }

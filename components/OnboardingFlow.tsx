@@ -72,16 +72,32 @@ const steps: OnboardingStep[] = [
 ];
 
 export function OnboardingFlow() {
-  const { settings, setShowOnboarding } = useAppSettings();
+  const { settings, setShowOnboarding, setHasSeenOnboarding } = useAppSettings();
   const [currentStep, setCurrentStep] = useState(0);
-  const [dismissed, setDismissed] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  // Only show onboarding on first visit (not seen before)
   useEffect(() => {
-    if (!settings.showOnboarding || dismissed) return;
-    setCurrentStep(0);
-  }, [settings.showOnboarding, dismissed]);
+    setMounted(true);
+  }, []);
 
-  if (!settings.showOnboarding || dismissed) return null;
+  // Auto-close onboarding after 10 seconds of inactivity if not interacted with
+  useEffect(() => {
+    if (!settings.showOnboarding || !mounted) return;
+    
+    const timer = setTimeout(() => {
+      dismissOnboarding();
+    }, 45000); // 45 seconds max display time
+
+    return () => clearTimeout(timer);
+  }, [settings.showOnboarding, mounted]);
+
+  const dismissOnboarding = () => {
+    setShowOnboarding(false);
+    setHasSeenOnboarding(true);
+  };
+
+  if (!mounted || !settings.showOnboarding || settings.hasSeenOnboarding) return null;
 
   const step = steps[currentStep];
   const isLast = currentStep === steps.length - 1;
@@ -98,10 +114,7 @@ export function OnboardingFlow() {
                 STEP {currentStep + 1} OF {steps.length}
               </span>
               <button
-                onClick={() => {
-                  setDismissed(true);
-                  setShowOnboarding(false);
-                }}
+                onClick={() => dismissOnboarding()}
                 className="text-xl text-slate-400 hover:text-slate-600"
               >
                 ✕
@@ -126,7 +139,7 @@ export function OnboardingFlow() {
           {step.action && (
             <a
               href={step.action}
-              onClick={() => setDismissed(true)}
+              onClick={() => dismissOnboarding()}
               className="block w-full bg-whale-600 hover:bg-whale-700 text-white font-bold py-3 px-4 rounded-xl text-center mb-4 transition"
             >
               {step.actionLabel}
@@ -145,10 +158,7 @@ export function OnboardingFlow() {
 
             {isLast ? (
               <button
-                onClick={() => {
-                  setDismissed(true);
-                  setShowOnboarding(false);
-                }}
+                onClick={() => dismissOnboarding()}
                 className="flex-1 py-3 px-4 bg-whale-600 hover:bg-whale-700 text-white font-bold rounded-xl transition"
               >
                 Get Started! 🚀
@@ -165,10 +175,7 @@ export function OnboardingFlow() {
 
           {/* Skip */}
           <button
-            onClick={() => {
-              setDismissed(true);
-              setShowOnboarding(false);
-            }}
+            onClick={() => dismissOnboarding()}
             className="w-full mt-3 text-slate-500 hover:text-slate-700 text-sm font-bold transition"
           >
             Skip

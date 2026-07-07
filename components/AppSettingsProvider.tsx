@@ -17,6 +17,7 @@ type AppSettings = {
   pinnedShortcutIds: string[];
   showLaunchSplash: boolean;
   showOnboarding: boolean;
+  hasSeenOnboarding: boolean;
 };
 
 type AppSettingsContextValue = {
@@ -33,6 +34,7 @@ type AppSettingsContextValue = {
   setPinnedShortcutIds: (ids: string[]) => void;
   setShowLaunchSplash: (enabled: boolean) => void;
   setShowOnboarding: (enabled: boolean) => void;
+  setHasSeenOnboarding: (seen: boolean) => void;
 };
 
 const defaultSettings: AppSettings = {
@@ -47,7 +49,8 @@ const defaultSettings: AppSettings = {
   dashboardSubtitle: 'Ready to plan a warm and organized school day?',
   pinnedShortcutIds: ['teacher-tips', 'weekly-plan', 'parent-messages'],
   showLaunchSplash: true,
-  showOnboarding: true
+  showOnboarding: false,
+  hasSeenOnboarding: false
 };
 
 const storageKey = 'the-whale-app-settings-v1';
@@ -87,7 +90,8 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
     setDashboardSubtitle: (dashboardSubtitle) => setSettings((prev) => ({ ...prev, dashboardSubtitle })),
     setPinnedShortcutIds: (pinnedShortcutIds) => setSettings((prev) => ({ ...prev, pinnedShortcutIds })),
     setShowLaunchSplash: (showLaunchSplash) => setSettings((prev) => ({ ...prev, showLaunchSplash })),
-    setShowOnboarding: (showOnboarding) => setSettings((prev) => ({ ...prev, showOnboarding }))
+    setShowOnboarding: (showOnboarding) => setSettings((prev) => ({ ...prev, showOnboarding })),
+    setHasSeenOnboarding: (hasSeenOnboarding) => setSettings((prev) => ({ ...prev, hasSeenOnboarding }))
   }), [settings]);
 
   return <AppSettingsContext.Provider value={value}>{children}</AppSettingsContext.Provider>;
