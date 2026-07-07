@@ -4,12 +4,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": { "description": "Supabase project URL" },
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": { "description": "Supabase anon key" },
-    "SUPABASE_SERVICE_ROLE_KEY": { "description": "Supabase service role key" },
-    "GROQ_API_KEY": { "description": "Groq API key for fast open-source LLM access (free tier available at groq.com)" }
-  },
   "functions": {
     "app/api/ai/generate/route.ts": { "maxDuration": 30 },
     "app/api/google/workspace/route.ts": { "maxDuration": 30 },
@@ -25,9 +19,5 @@
         { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=3600" }
       ]
     }
-  ],
-  "buildCache": {
-    "nodejs": true,
-    "paths": ["node_modules/**", ".next/cache/**"]
-  }
+  ]
 }
