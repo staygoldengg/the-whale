@@ -15,6 +15,7 @@ import {
   GlobalEarlyLearningTrends,
 } from './LearningPathwaysAndTrends';
 import { WDSEducationalVideoPlayer } from './WDSEducationalVideoPlayer';
+import { WDSProfessionalGrowth } from './WDSProfessionalGrowth';
 
 /**
  * SchoolDashboard Component
@@ -128,7 +129,7 @@ export function SchoolDashboard() {
       {/* Professional Growth Tab */}
       {activeTab === 'professional' && (
         <div className="space-y-8">
-          <WDSEducationalVideoPlayer />
+          <WDSProfessionalGrowth />
         </div>
       )}
 

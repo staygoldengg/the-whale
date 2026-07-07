@@ -56,11 +56,15 @@ export function WDSEducationalVideoPlayer() {
       {/* Header */}
       <div className="text-center space-y-2 px-4">
         <div className="flex items-center justify-center gap-2">
-          <div className="text-3xl">🎓</div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-            Professional Learning
-          </h2>
+          <img
+            src="https://westhamptondayschool.org/wp-content/uploads/2019/03/wds-logo-horiz.png"
+            alt="Westhampton Day School"
+            className="h-12 object-contain"
+          />
         </div>
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          Professional Learning Videos
+        </h2>
         <p className="text-sm text-slate-600 max-w-2xl mx-auto">
           Curated educational content to support your growth as an educator. Explore teaching strategies, child development, and professional excellence.
         </p>
