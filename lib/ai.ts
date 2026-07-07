@@ -4,6 +4,7 @@ import { appBaseIndexItems } from './appIndex';
 import { customIndexDocuments } from './indexDocuments';
 import { connectorIndexItems } from './externalConnectors';
 import { campLessonRecordsToIndexItems, lessonPlanRecords } from './lessonPlanKnowledge';
+import { supabaseAdmin } from './supabaseAdmin';
 
 const categoryMap: Record<WhaleTool, string[]> = {
   'theme-week': ['Theme Weeks', 'Classroom Activities', 'Slogans', 'School Culture'],
@@ -20,14 +21,24 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
   const categories = categoryMap[tool];
   const words = prompt.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).slice(0, 16);
 
-  const { data, error } = await supabaseAdmin
-    .from('ai_index_items')
-    .select('*')
-    .eq('approved', true)
-    .in('category', categories)
-    .limit(30);
+  let dbData: AiIndexItem[] = [];
+  
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('ai_index_items')
+      .select('*')
+      .eq('approved', true)
+      .in('category', categories)
+      .limit(30);
 
-  if (error) throw new Error(error.message);
+    if (error) {
+      console.warn('Failed to fetch from Supabase:', error.message);
+    } else {
+      dbData = data || [];
+    }
+  } catch (err) {
+    console.warn('Supabase connection error:', err);
+  }
 
   const staticMatches = appBaseIndexItems.filter((item) => categories.includes(item.category));
   const customMatches = customIndexDocuments.filter((item) => categories.includes(item.category));
@@ -36,7 +47,7 @@ export async function getIndexContext(prompt: string, tool: WhaleTool): Promise<
     categories.includes(item.category)
   );
   const combined = [
-    ...(data ?? []),
+    ...dbData,
     ...staticMatches,
     ...customMatches,
     ...integrationMatches,
@@ -128,6 +139,3 @@ ${prompt}`
     throw error;
   }
 }
-
-// Import supabaseAdmin after function definitions
-import { supabaseAdmin } from './supabaseAdmin';
