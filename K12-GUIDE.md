@@ -49,8 +49,8 @@
 
 ### 1. **Set Environment Variable**
 ```bash
-# .env.local (already configured)
-GROQ_API_KEY=YOUR_GROQ_API_KEY
+# .env.local (add your own GROQ API key from https://console.groq.com)
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 ### 2. **Add Custom School Documents** (Optional)
